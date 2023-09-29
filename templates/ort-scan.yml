@@ -1,0 +1,182 @@
+---
+# Copyright (C) 2020 The ORT Project Authors
+#
+# Licensed under the Apache License, Version 2.0 (the 'License');
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an 'AS IS' BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# License-Filename: LICENSE
+
+parameters:
+- name: 'vcs-type'
+  type: 'string'
+  default: 'git'
+  values:
+    - 'git'
+    - 'git-repo'
+    - 'mercurial'
+    - 'subversion'
+  # Type of version control system.
+- name: 'vcs-url'
+  type: 'string'
+  default: ''
+  # Repository or clone URL of project to scan.
+- name: 'vcs-revision'
+  type: 'string'
+  default: ''
+  # SHA1 or tag to scan (do not use branch names as they can move). 
+  #   If vcs-type is 'git-repo', SHA1 must be unabbreviated.
+  #   Tag names must be prefixed with 'refs/tags/'.  
+- name: 'vcs-path'
+  type: 'string'
+  default: ''
+  # Leave this field empty unless one of the following special cases applies:
+  # 1) project vcs-type is git-repo - specify path to repo manifest file
+  # (e.g. sdk.xml, note vcs-url must point to a manifest repository)
+  # 2) you require sparse checkout - specify repository sub-path to download and scan
+  # (e.g. projects/gradle/, note sparse checkout is possible only for vcs-type git, mercurial or subversion)
+- name: 'advisors'
+  type: 'string'
+  default: 'OSV'
+  # Comma-separated list of security vulnerability advisors to use.
+- name: 'allow-dynamic-versions'
+  type: 'boolean'
+  default: false
+  # Set to 'true' only if dynamic dependency versions are allowed (note version ranges specified for dependencies may cause unstable results).
+  # This field applies only to package managers that support lock files, e.g. NPM.
+- name: 'db-url'
+  type: 'string'
+  default: ''
+  # URL of the PostgreSQL database used for caching scan-results and storing file archives.
+- name: 'db-username'
+  type: 'string'
+  default: ''
+  # Username for the PostgreSQL database used for caching scan-results and storing file archives.
+- name: 'db-password'
+  type: 'string'
+  default: ''
+  # Password for the PostgreSQL database used for caching scan-results and storing file archives.
+- name: 'docker-cli-args'
+  type: 'string'
+  default: ''
+  # List of arguments to pass to Docker CLI.
+- name: 'fail-on'
+  type: 'string'
+  default: 'issues'
+  values:
+    - 'issues'
+    - 'violations'
+    - 'issues,violations'
+    # Comma-separated list of ORT results that if exceeding their severity threshold will fail the action.
+    # If empty, then exceeding severity threshold will not fail the action.
+- name: 'http-file-server-url'
+  type: 'string'
+  default: ''
+  # URL of the HTTP file server used for caching scan-results and storing file archives.
+- name: 'http-file-server-username'
+  type: 'string'
+  default: ''
+  # Username for HTTP file server used for caching scan-results and storing file archives.
+- name: 'http-file-server-password'
+  type: 'string'
+  default: ''
+  # Password for HTTP file server used for caching scan-results and storing file archives.
+- name: 'http-file-server-token'
+  type: 'string'
+  default: ''
+  # API token for HTTP file server used for caching scan-results and storing file archives.
+- name: 'image'
+  type: 'string'
+  default: 'ghcr.io/oss-review-toolkit/ort-extended:latest'
+  # URL for ORT Docker image to use.
+- name: 'log-level'
+  type: 'string'
+  default: 'warn'
+  # Set value to 'debug' to see additional debug output to help tracking down errors.
+- name: 'ort-cli-args'
+  type: 'string'
+  default: '-P ort.forceOverwrite=true --stacktrace'
+  # List of arguments to pass to ORT CLI, applies to all commands.
+- name: 'ort-cli-analyze-args'
+  type: 'string'
+  default: ''
+  # List of arguments to pass to ORT Analyzer CLI.
+- name: 'ort-cli-scan-args'
+  type: 'string'
+  default: ''
+  # List of arguments to pass to ORT Scanner CLI.
+- name: 'ort-cli-evaluate-args'
+  default: ''
+  # List of arguments to pass to ORT Evaluator CLI.
+- name: 'ort-cli-advise-args'
+  type: 'string'
+  default: ''
+  # List of arguments to pass to ORT Advisor CLI.
+- name: 'ort-cli-report-args'
+  type: 'string'
+  default: '-O SpdxDocument=output.file.formats=json,yaml'
+  # List of arguments to pass to ORT Reporter CLI.
+- name: 'ort-config-path'
+  type: 'string'
+  default: ''
+  # Path to ORT configuration directory within the user home directory.
+- name: 'ort-home-path'
+  type: 'string'
+  default: '.ort'
+  # Path to ORT 'home' or 'data' directory within the user home directory.
+- name: 'ort-config-repository'
+  type: 'string'
+  default: 'https://github.com/oss-review-toolkit/ort-config.git'
+  # URL to ORT configuration repository to use.
+- name: 'ort-config-revision'
+  type: 'string'
+  default: 'main'
+  # The Git revision or branch of the ORT configuration repository to use.
+- name: 'ort-yml-path'
+  type: 'string'
+  default: ''
+  # Path to file containing the repository configuration.
+  # If set, the '.ort.yml' file from the repository is ignored.
+- name: 'project-path'
+  type: 'string'
+  default: 'FIXME'
+  # Path within $GITHUB_WORKSPACE to be analyzed/scanned with ORT.
+  # If empty, $GITHUB_WORKSPACE directory is scanned.
+- name: 'report-formats'
+  type: 'string'
+  default: 'CycloneDx,SpdxDocument,WebApp'
+  # Comma-separated list of ORT reporters to run.
+- name: 'run'
+  type: 'string'
+  default: >
+    cache-dependencies,
+    labels,
+    analyzer,
+    evaluator,
+    advisor,
+    reporter,
+    upload-results
+  # Comma-separated list of optional workflow steps to run.
+- name: 'sw-name'
+  type: 'string'
+  default: ''
+  # Name of project, product or component to be scanned.
+  # By default the name of the repository is used as shown in its clone URL.
+- name: 'sw-version'
+  type: 'string'
+  default: ''
+  # Project version number or release name (use the version from package metadata, not VCS revision).
+  # By default, the Git short SHA is used.
+
+
+steps:
+- bash: echo "Hello ORT!!!"
